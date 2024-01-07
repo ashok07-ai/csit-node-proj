@@ -1,13 +1,28 @@
 const User = require("../models/User.js");
 const bcrypt = require('bcryptjs');
 const Sequelize = require('sequelize'); // Import Sequelize
+const sequelize = require("../config/db.js");
 
 
 // @desc Get User
 // @route GET /api/user/
 // @access public
 const getAllUser = async (req, res) => {
-
+    try {
+        const allUserDetails = await User.findAll({
+            attributes: {
+                exclude: ['password']
+            }
+        });
+        if (allUserDetails.length > 0) {
+            return res.status(200).json({ message: "User fetched successfully!!", data: allUserDetails })
+        } else {
+            return res.status(500).json({ message: "Internal server error!!" })
+        }
+    } catch (error) {
+        console.log("Error", error)
+        return res.status(500).json({ message: "Internal Server Error!!" })
+    }
 }
 
 // @desc Create User
@@ -20,6 +35,13 @@ const createUser = async (req, res) => {
                 email: req.body.email,
             }
         })
+
+        const allowedGenderValues = ["male", "female", "others"]
+        const enteredGenderValue = (req.body.gender).toLowerCase();
+        if (!allowedGenderValues.includes(enteredGenderValue)) {
+            return res.status(400).json({ message: "Invalid gender. Must be male, female or others" })
+
+        }
 
         if (existingEmail) {
             return res.status(400).json({ message: "Email already exist!!" })
@@ -58,21 +80,21 @@ const createUser = async (req, res) => {
 // @route GET /api/user/:id
 // @access public
 const getUserById = async (req, res) => {
-    const userId = req.params.id;
+    let userId = req.params.id
     try {
         const userData = await User.findOne({
-            where: { id: userId },
-            attributes: { exclude: ['password'] }
-        });
-
+            where: {
+                id: userId,
+            }
+        })
         if (userData) {
-            res.status(200).json({ message: "User fetched successfully", data: userData });
+            return res.status(200).json({ message: "User fetched..", data: userData })
         } else {
-            res.status(404).json({ message: 'User not found' });
+            return res.status(500).json({ message: "User not found" })
         }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Something went wrong. Please try again' });
+        console.log("Error", error)
+        return res.status(500).json({ message: "Internal Server Error!!" })
     }
 }
 
@@ -80,45 +102,47 @@ const getUserById = async (req, res) => {
 // @route PUT /api/user/:id
 // @access public
 const updateUser = async (req, res) => {
-    const userId = req.params.id;
+    let userId = req.params.id;
     try {
-        const userExist = await User.findOne({
-            where: { id: userId },
-            attributes: { exclude: ['password'] }
-        });
+        const userData = await User.findOne({
+            where: {
+                id: userId,
+            }
+        })
 
         const existingEmail = await User.findOne({
             where: {
                 email: req.body.email,
                 id: { [Sequelize.Op.not]: userId } // Exclude the current user from the check
             }
-        });
+        })
 
         if (existingEmail) {
-            return res.status(400).json({ message: "Email already exists" });
+            return res.status(400).json({ message: "Email already exist" })
         }
 
-        if (userExist) {
-            const updatedData = await userExist.update({
+        if (userData) {
+            const updatedUserData = await userData.update({
                 fullName: req.body.fullName,
                 email: req.body.email,
                 address: req.body.address,
                 mobileNumber: req.body.mobileNumber,
                 gender: req.body.gender,
                 dateOfBirth: req.body.dateOfBirth
-            });
-            if (updatedData) {
-                res.status(200).json({ message: "User updated successfully", data: updatedData });
+            })
+            if (updatedUserData) {
+                return res.status(201).json({ message: "User updated successfully!!" })
             } else {
-                res.status(404).json({ message: "User not found" });
+                return res.status(500).json({ message: "Something went wrong" })
             }
         } else {
-            res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" })
         }
 
+
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Something went wrong. Please try again" });
+        console.log("Error", error)
+        return res.status(500).json({ message: "Internal Server Error!!" })
     }
 };
 
@@ -129,22 +153,25 @@ const updateUser = async (req, res) => {
 // @route DELETE /api/user/:id
 // @access public
 const deleteUser = async (req, res) => {
-    const userId = req.params.id;
+    let userId = req.params.id;
     try {
-        const user = await User.findOne({
-            where: { id: userId }
-        });
+        const userData = await User.findOne({
+            where: {
+                id: userId,
+            }
+        })
 
-        if (user) {
-            await user.destroy();
-            res.status(200).json({ message: 'User deleted successfully' });
+        if (userData) {
+            await userData.destroy();
+            res.status(200).json({ message: 'User deleted successfully!!' });
         } else {
-            res.status(404).json({ message: 'User not found' });
+            res.status(404).json({ message: "User not found" })
         }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Something went wrong. Please try again' });
+        console.error("Error", error);
+        res.status(500).json({ message: "Internal Server error!!" })
     }
+
 
 }
 
