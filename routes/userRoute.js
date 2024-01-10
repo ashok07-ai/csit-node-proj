@@ -8,7 +8,7 @@ const {
     deleteUser
 } = require("../controllers/UserController.js")
 
-const login = require('../controllers/LoginController.js')
+const Login = require("../controllers/LoginController.js");
 const verifyToken = require("../middleware/verifyToken.js")
 
 router.route('/').get(verifyToken, getAllUser)
@@ -16,6 +16,6 @@ router.route('/:id').get(getUserById)
 router.route("/").post(createUser)
 router.route("/:id").put(updateUser)
 router.route("/:id").delete(deleteUser);
-router.route("/login").post(login)
+router.route("/login").post(Login);
 
 module.exports = router

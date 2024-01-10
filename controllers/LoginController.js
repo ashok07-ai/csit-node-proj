@@ -1,41 +1,40 @@
 const User = require("../models/User.js");
-const bcrypt = require('bcryptjs');
-const jwt = require("jsonwebtoken")
-
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // @desc Login
-// @route POST /api/login/
+// @route POST /api/user/login
 // @access public
-const login = async (req, res) => {
-    const { email, password } = req.body
+
+const Login = async (req, res) => {
+    const { email, password } = req.body;
     try {
         const userExist = await User.findOne({
             where: {
                 email
             }
-        });
-        console.log(userExist)
+        })
+
         if (!userExist) {
-            return res.status(404).json({ message: "User not found!!" })
+            return res.status(404).json({ message: "Email not found!!" })
         }
 
-        // check if password is correct 
-        const isPasswordValid = await bcrypt.compare(password, userExist.password);
+        const isPasswordValid = await bcrypt.compare(password, userExist.password)
 
         if (isPasswordValid) {
             const token = jwt.sign({
                 userId: userExist.id,
                 email: userExist.email,
                 mobileNumber: userExist.mobileNumber
-            }, "secretKey", { expiresIn: 120 })
+            }, "secretKey", { expiresIn: 86400 })
 
             if (token) {
-                res.status(200).json({ message: "LoggedIn Successfully!!", accessToken: token })
+                return res.status(200).json({ message: "Loggedin successfully!!", accessToken: token })
             } else {
-                return res.status(500).json({ message: "Internal Server Error!!" })
+                return res.status(500).json({ message: "Internal server error" });
             }
         } else {
-            return res.status(401).json({ message: "Invalid Credientails. Couldn't Log in!!" });
+            return res.status(401).json({ message: "Invalid Credentials!!" })
         }
 
 
@@ -45,4 +44,4 @@ const login = async (req, res) => {
     }
 }
 
-module.exports = login
+module.exports = Login
