@@ -5,7 +5,8 @@ const {
     createUser,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    changePassword,
 } = require("../controllers/UserController.js")
 
 const Login = require("../controllers/LoginController.js");
@@ -17,5 +18,6 @@ router.route("/").post(createUser)
 router.route("/:id").put(updateUser)
 router.route("/:id").delete(deleteUser);
 router.route("/login").post(Login);
+router.route("/changePassword/:id").patch(changePassword);
 
 module.exports = router

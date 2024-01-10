@@ -131,7 +131,7 @@ const updateUser = async (req, res) => {
                 dateOfBirth: req.body.dateOfBirth
             })
             if (updatedUserData) {
-                return res.status(201).json({ message: "User updated successfully!!" })
+                return res.status(200).json({ message: "User updated successfully!!" })
             } else {
                 return res.status(500).json({ message: "Something went wrong" })
             }
@@ -145,7 +145,6 @@ const updateUser = async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error!!" })
     }
 };
-
 
 
 
@@ -175,10 +174,62 @@ const deleteUser = async (req, res) => {
 
 }
 
+// @desc Delete User
+// @route DELETE /api/user/:id
+// @access public
+const changePassword = async (req, res) => {
+    let userId = req.params.id;
+    console.log(userId)
+    const { oldPassword, newPassword, confirmNewPassword } = req.body
+    console.log(oldPassword)
+    try {
+        const userData = await User.findOne({
+            where: {
+                id: userId,
+            }
+        })
+
+        const checkOldPassword = userData.password;
+        console.log(checkOldPassword)
+        const isOldPasswordValid = bcrypt.compareSync(oldPassword, checkOldPassword);
+        if (!isOldPasswordValid) {
+            return res.status(401).json({ message: 'Incorrect password' });
+        }
+
+
+        if (newPassword !== confirmNewPassword) {
+            return res.status(401).json({ message: 'Password doesnt match!!' });
+        }
+
+        if (userData) {
+            console.log(newPassword)
+            const hashPassword = bcrypt.hashSync(newPassword, 10);
+            const updatePasswordDetails = await User.update({
+                password: hashPassword
+            }, { where: { id: userId } })
+            if (updatePasswordDetails) {
+                return res.status(200).json({ message: "Password Changed Successfully!" });
+            } else {
+                return res.status(400).json({ message: "Cannot change the password" })
+            }
+        } else {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+
+    } catch (error) {
+        console.error("Error", error);
+        return res.status(500).json({ message: "Internal Server error!!" })
+    }
+
+
+}
+
 module.exports = {
     getAllUser,
     createUser,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    changePassword,
 }
