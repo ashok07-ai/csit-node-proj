@@ -174,8 +174,8 @@ const deleteUser = async (req, res) => {
 
 }
 
-// @desc Delete User
-// @route DELETE /api/user/:id
+// @desc Change User Password
+// @route PATCH /api/user/changePassword/:id
 // @access public
 const changePassword = async (req, res) => {
     let userId = req.params.id;
