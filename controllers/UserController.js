@@ -148,6 +148,7 @@ const updateUser = async (req, res) => {
 
 
 
+
 // @desc Delete User
 // @route DELETE /api/user/:id
 // @access public
@@ -174,55 +175,55 @@ const deleteUser = async (req, res) => {
 
 }
 
-// @desc Change User Password
-// @route PATCH /api/user/changePassword/:id
+// @desc ChangePassword
+// @route PATCH /api/user/changePassword:id
 // @access public
+
 const changePassword = async (req, res) => {
-    let userId = req.params.id;
-    console.log(userId)
+    const userId = req.params.id;
     const { oldPassword, newPassword, confirmNewPassword } = req.body
-    console.log(oldPassword)
+
     try {
         const userData = await User.findOne({
             where: {
-                id: userId,
+                id: userId
             }
         })
 
         const checkOldPassword = userData.password;
-        console.log(checkOldPassword)
         const isOldPasswordValid = bcrypt.compareSync(oldPassword, checkOldPassword);
+
         if (!isOldPasswordValid) {
-            return res.status(401).json({ message: 'Incorrect password' });
+            return res.status(401).json({ message: "Incorrect Password!!" })
         }
 
-
         if (newPassword !== confirmNewPassword) {
-            return res.status(401).json({ message: 'Password doesnt match!!' });
+            return res.status(401).json({ message: "Password doesnt match!!" })
         }
 
         if (userData) {
-            console.log(newPassword)
-            const hashPassword = bcrypt.hashSync(newPassword, 10);
-            const updatePasswordDetails = await User.update({
-                password: hashPassword
-            }, { where: { id: userId } })
-            if (updatePasswordDetails) {
-                return res.status(200).json({ message: "Password Changed Successfully!" });
+            const hasNewPasswod = bcrypt.hashSync(newPassword, 10)
+            const updatePassword = await User.update({
+                password: hasNewPasswod
+            }, {
+                where: {
+                    id: userId
+                }
+            })
+
+            if (updatePassword) {
+                return res.status(200).json({ message: "Password updated successfully!!" })
             } else {
-                return res.status(400).json({ message: "Cannot change the password" })
+                return res.status(500).json({ message: "Couldnt change password" })
             }
+
         } else {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: "User not found!!" })
         }
-
-
     } catch (error) {
         console.error("Error", error);
-        return res.status(500).json({ message: "Internal Server error!!" })
+        res.status(500).json({ message: "Internal Server error!!" })
     }
-
-
 }
 
 module.exports = {
@@ -231,5 +232,5 @@ module.exports = {
     getUserById,
     updateUser,
     deleteUser,
-    changePassword,
+    changePassword
 }

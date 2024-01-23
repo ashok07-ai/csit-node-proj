@@ -2,18 +2,22 @@ const express = require("express");
 const dotenv = require('dotenv');
 const sequelize = require('./config/db.js');
 const bodyParser = require('body-parser');
-const User = require("./models/User.js")
 
 const app = express();
 const port = process.env.PORT || 5001;
+
+
+
 app.get('/', (req, res) => {
     res.send("Welcome To Nodejs Backend Server")
 })
 
 // userRoute Middleware
 app.use(bodyParser.json());
-// User.sync({ force: true });
 app.use('/api/user', require("./routes/userRoute.js"))
+app.use('/api/student', require("./routes/studentRoute.js"))
+app.use('/api/book', require("./routes/bookRoute.js"))
+app.use('/api/author', require("./routes/authorRoute.js"))
 sequelize.sync()
 
 try {
