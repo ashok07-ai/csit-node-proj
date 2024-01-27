@@ -1,6 +1,7 @@
 const Book = require("../models/Book.js"); // Import Sequelize
 const sequelize = require("../config/db.js");
 const Author = require("../models/Author.js");
+const Student = require("../models/Student.js");
 
 
 // @desc Get Book
@@ -8,11 +9,19 @@ const Author = require("../models/Author.js");
 // @access public
 const getAllBook = async (req, res) => {
     try {
-        const allBookDetails = await Book.findAll({ include: Author });
+        const allBookDetails = await Book.findAll(
+            {
+                include: [
+                    {
+                        model: Student
+                    },
+                ],
+            }
+        );
         if (allBookDetails.length > 0) {
             return res.status(200).json({ message: "Book fetched successfully!!", data: allBookDetails })
         } else {
-            return res.status(500).json({ message: "Internal server error!!" })
+            return res.status(500).json({ message: "Empty Data / Data cannot be fetched!!" })
         }
     } catch (error) {
         console.log("Error", error)
@@ -24,21 +33,27 @@ const getAllBook = async (req, res) => {
 // @route POST /api/book/
 // @access public
 const createBook = async (req, res) => {
-    const { name, price, description, authorId } = req.body;
-
     try {
-        const newBook = await Book.create({ name, price, description, authorId })
+        const { name, price, description, studentId } = req.body;
 
-        if (newBook) {
-            return res.status(201).json({ message: "Book Created Successfully!!", data: newBook })
-        } else {
-            return res.status(500).json({ message: "Internal Server Error!!" })
-
+        // Check if the author exists
+        const student = await Student.findByPk(studentId);
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
         }
-    } catch (error) {
-        console.log("Error", error)
-        return res.status(500).json({ message: "Internal Server Error!!" })
 
+        // Create a new book and associate it with the student
+        const book = await Book.create({
+            name,
+            price,
+            description,
+            studentId,
+        });
+
+        res.status(201).json({ message: 'Book created successfully', data: book.toJSON() });
+    } catch (error) {
+        console.error('Error creating book:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
@@ -49,10 +64,11 @@ const createBook = async (req, res) => {
 const getBookById = async (req, res) => {
     let bookId = req.params.id
     try {
-        const bookData = await User.findOne({
+        const bookData = await Book.findOne({
             where: {
-                id: userId,
-            }
+                id: bookId,
+            },
+            include: Student
         })
         if (bookData) {
             return res.status(200).json({ message: "Book fetched..", data: bookData })
@@ -71,7 +87,7 @@ const getBookById = async (req, res) => {
 const updateBook = async (req, res) => {
     let bookId = req.params.id;
     try {
-        const bookData = await User.findOne({
+        const bookData = await Book.findOne({
             where: {
                 id: bookId,
             }
@@ -106,7 +122,7 @@ const updateBook = async (req, res) => {
 const deleteBook = async (req, res) => {
     let bookId = req.params.id;
     try {
-        const bookData = await User.findOne({
+        const bookData = await Book.findOne({
             where: {
                 id: bookId,
             }
@@ -122,8 +138,6 @@ const deleteBook = async (req, res) => {
         console.error("Error", error);
         res.status(500).json({ message: "Internal Server error!!" })
     }
-
-
 }
 
 module.exports = {

@@ -4,7 +4,7 @@ const Book = require("../models/Book.js");
 
 const getAllAuthor = async (req, res) => {
     try {
-        const allAuthorDetails = await Author.findAll({ include: Book });
+        const allAuthorDetails = await Author.findAll();
         if (allAuthorDetails.length > 0) {
             return res.status(200).json({ message: "Author fetched successfuly!!", data: allAuthorDetails })
         } else {

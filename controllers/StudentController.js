@@ -1,10 +1,11 @@
 const Student = require("../models/Student.js");
 const sequelize = require("../config/db.js");
-const Sequelize = require("sequelize")
+const Sequelize = require("sequelize");
+const Book = require("../models/Book.js");
 
 const getAllStudent = async (req, res) => {
     try {
-        const allStudentDetails = await Student.findAll();
+        const allStudentDetails = await Student.findAll({ include: Book });
         if (allStudentDetails.length > 0) {
             return res.status(200).json({ message: "Student fetched successfuly!!", data: allStudentDetails })
         } else {
@@ -42,7 +43,7 @@ const createStudent = async (req, res) => {
         })
 
         if (newStudent) {
-            return res.status(201).json({ message: "studentId Created Successfully!!" })
+            return res.status(201).json({ message: "Student Created Successfully!!", data: newStudent })
         } else {
             return res.status(500).json({ message: "Internal Server Error!!" })
 
@@ -61,6 +62,7 @@ const getStudentById = async (req, res) => {
             where: {
                 id: studentId,
             },
+            include: Book
         })
         if (studentData) {
             return res.status(200).json({ message: "StudentId fetched..", data: studentData })

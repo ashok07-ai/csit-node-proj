@@ -3,13 +3,18 @@ const { DataTypes } = require("sequelize");
 const Author = require("./Author.js");
 
 const Book = db.define('Book', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false
+    },
     name: {
         type: DataTypes.STRING,
         allowNull: false
     },
     price: {
         type: DataTypes.STRING,
-        unique: true,
         allowNull: false
     },
     description: {
@@ -17,11 +22,14 @@ const Book = db.define('Book', {
         allowNull: false
 
     },
+    studentId: {
+        type: DataTypes.INTEGER,
+        allowNull: false, // Ensure it's not nullable
+    }
 }, {
     tableName: 'books',
     timestamps: true
 })
-Book.belongsTo(Author, { foreignKey: 'authorId' });
-Author.hasOne(Book, { foreignKey: 'authorId' });
+
 
 module.exports = Book

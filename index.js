@@ -2,10 +2,10 @@ const express = require("express");
 const dotenv = require('dotenv');
 const sequelize = require('./config/db.js');
 const bodyParser = require('body-parser');
+const Book = require("./models/Book.js");
 
 const app = express();
 const port = process.env.PORT || 5001;
-
 
 
 app.get('/', (req, res) => {
@@ -18,7 +18,7 @@ app.use('/api/user', require("./routes/userRoute.js"))
 app.use('/api/student', require("./routes/studentRoute.js"))
 app.use('/api/book', require("./routes/bookRoute.js"))
 app.use('/api/author', require("./routes/authorRoute.js"))
-sequelize.sync()
+// sequelize.sync()
 
 try {
     sequelize.authenticate();

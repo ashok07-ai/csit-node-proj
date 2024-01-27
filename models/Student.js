@@ -1,5 +1,6 @@
 const db = require("../config/db.js")
 const { DataTypes } = require("sequelize")
+const Book = require("../models/Book.js")
 const Student = db.define('Student', {
     id: {
         type: DataTypes.INTEGER,
@@ -31,5 +32,9 @@ const Student = db.define('Student', {
         tableName: 'students',
         timstamps: false
     })
+
+// define One-to-One Relationship between Student and Book
+Student.hasOne(Book, { foreignKey: "studentId" });
+Book.belongsTo(Student, { foreignKey: "studentId" });
 
 module.exports = Student
