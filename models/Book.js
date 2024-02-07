@@ -22,10 +22,7 @@ const Book = db.define('Book', {
         allowNull: false
 
     },
-    studentId: {
-        type: DataTypes.INTEGER,
-        allowNull: false, // Ensure it's not nullable
-    }
+
 }, {
     tableName: 'books',
     timestamps: true

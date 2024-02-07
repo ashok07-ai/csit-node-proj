@@ -9,15 +9,13 @@ const Student = require("../models/Student.js");
 // @access public
 const getAllBook = async (req, res) => {
     try {
-        const allBookDetails = await Book.findAll(
-            {
-                include: [
-                    {
-                        model: Student
-                    },
-                ],
-            }
-        );
+        const allBookDetails = await Book.findAll({
+            include: [
+                {
+                    model: Student
+                }
+            ]
+        });
         if (allBookDetails.length > 0) {
             return res.status(200).json({ message: "Book fetched successfully!!", data: allBookDetails })
         } else {
@@ -34,20 +32,19 @@ const getAllBook = async (req, res) => {
 // @access public
 const createBook = async (req, res) => {
     try {
-        const { name, price, description, studentId } = req.body;
+        const { name, price, description } = req.body;
 
-        // Check if the author exists
-        const student = await Student.findByPk(studentId);
-        if (!student) {
-            return res.status(404).json({ message: 'Student not found' });
-        }
+        // Check if the student exists
+        // const student = await Student.findByPk(studentId);
+        // if (!student) {
+        //     return res.status(404).json({ message: 'Student not found' });
+        // }
 
         // Create a new book and associate it with the student
         const book = await Book.create({
             name,
             price,
             description,
-            studentId,
         });
 
         res.status(201).json({ message: 'Book created successfully', data: book.toJSON() });
@@ -68,7 +65,6 @@ const getBookById = async (req, res) => {
             where: {
                 id: bookId,
             },
-            include: Student
         })
         if (bookData) {
             return res.status(200).json({ message: "Book fetched..", data: bookData })

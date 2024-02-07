@@ -33,8 +33,9 @@ const Student = db.define('Student', {
         timstamps: false
     })
 
-// define One-to-One Relationship between Student and Book
-Student.hasOne(Book, { foreignKey: "studentId" });
-Book.belongsTo(Student, { foreignKey: "studentId" });
+// define one-to-one relationship between Book and Student
+// Student.hasOne(Book, { foreignKey: "studentId" });
+// Book.belongsTo(Student, { foreignKey: "studentId" });
+
 
 module.exports = Student

@@ -5,7 +5,13 @@ const Book = require("../models/Book.js");
 
 const getAllStudent = async (req, res) => {
     try {
-        const allStudentDetails = await Student.findAll({ include: Book });
+        const allStudentDetails = await Student.findAll({
+            include: [
+                {
+                    model: Book
+                }
+            ]
+        });
         if (allStudentDetails.length > 0) {
             return res.status(200).json({ message: "Student fetched successfuly!!", data: allStudentDetails })
         } else {
@@ -62,7 +68,6 @@ const getStudentById = async (req, res) => {
             where: {
                 id: studentId,
             },
-            include: Book
         })
         if (studentData) {
             return res.status(200).json({ message: "StudentId fetched..", data: studentData })

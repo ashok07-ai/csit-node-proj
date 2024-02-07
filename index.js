@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const sequelize = require('./config/db.js');
 const bodyParser = require('body-parser');
 const Book = require("./models/Book.js");
+const Student = require("./models/Student.js");
 
 const app = express();
 const port = process.env.PORT || 5001;
@@ -18,7 +19,10 @@ app.use('/api/user', require("./routes/userRoute.js"))
 app.use('/api/student', require("./routes/studentRoute.js"))
 app.use('/api/book', require("./routes/bookRoute.js"))
 app.use('/api/author', require("./routes/authorRoute.js"))
-// sequelize.sync()
+
+Student.belongsToMany(Book, { through: 'student_books' })
+Book.belongsToMany(Student, { through: 'student_books' })
+// sequelize.sync({ force: true })
 
 try {
     sequelize.authenticate();
