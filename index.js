@@ -4,6 +4,7 @@ const sequelize = require('./config/db.js');
 const bodyParser = require('body-parser');
 const Book = require("./models/Book.js");
 const Student = require("./models/Student.js");
+const StudentBook = require("./models/StudentBook.js");
 
 const app = express();
 const port = process.env.PORT || 5001;
@@ -20,8 +21,6 @@ app.use('/api/student', require("./routes/studentRoute.js"))
 app.use('/api/book', require("./routes/bookRoute.js"))
 app.use('/api/author', require("./routes/authorRoute.js"))
 
-Student.belongsToMany(Book, { through: 'student_books' })
-Book.belongsToMany(Student, { through: 'student_books' })
 // sequelize.sync({ force: true })
 
 try {

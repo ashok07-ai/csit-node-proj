@@ -2,6 +2,7 @@ const Student = require("../models/Student.js");
 const sequelize = require("../config/db.js");
 const Sequelize = require("sequelize");
 const Book = require("../models/Book.js");
+const StudentBook = require("../models/StudentBook.js");
 
 const getAllStudent = async (req, res) => {
     try {
@@ -52,6 +53,39 @@ const createStudent = async (req, res) => {
             return res.status(201).json({ message: "Student Created Successfully!!", data: newStudent })
         } else {
             return res.status(500).json({ message: "Internal Server Error!!" })
+
+        }
+    } catch (error) {
+        console.log("Error", error)
+        return res.status(500).json({ message: "Internal Server Error!!" })
+    }
+};
+
+const createStudnetBookMultipleRelation = async (req, res) => {
+    console.log("multiple")
+    try {
+       const {StudentId, BookId} = req.body
+        // Check if the student exists
+        const isStudentExist = await Student.findByPk(StudentId);
+        if (!isStudentExist) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+         // Check if the book exists
+         const isBookExist = await Student.findByPk(BookId);
+         if (!isBookExist) {
+             return res.status(404).json({ message: 'Book not found' });
+         }
+
+        const newStudentBookRealtion = await StudentBook.create({
+           StudentId,
+           BookId
+        })
+
+        if (newStudentBookRealtion) {
+            return res.status(201).json({ message: "Student and Book Relation Created Successfully!!", data: newStudentBookRealtion })
+        } else {
+            return res.status(500).json({ message: "Cannot Create Relation between Student and Book" })
 
         }
     } catch (error) {
@@ -150,6 +184,7 @@ const deleteStudent = async (req, res) => {
 module.exports = {
     getAllStudent,
     createStudent,
+    createStudnetBookMultipleRelation,
     getStudentById,
     updateStudent,
     deleteStudent
