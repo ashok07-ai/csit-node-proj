@@ -20,6 +20,7 @@ app.use('/api/user', require("./routes/userRoute.js"))
 app.use('/api/student', require("./routes/studentRoute.js"))
 app.use('/api/book', require("./routes/bookRoute.js"))
 app.use('/api/author', require("./routes/authorRoute.js"))
+app.use('/api/uploadImage', require("./routes/uploadImageRoute.js"))
 
 // sequelize.sync({ force: true })
 

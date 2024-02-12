@@ -63,8 +63,9 @@ const createStudent = async (req, res) => {
 
 const createStudnetBookMultipleRelation = async (req, res) => {
     console.log("multiple")
+    const {StudentId, BookId} = req.body
+    console.log(StudentId, BookId)
     try {
-       const {StudentId, BookId} = req.body
         // Check if the student exists
         const isStudentExist = await Student.findByPk(StudentId);
         if (!isStudentExist) {
