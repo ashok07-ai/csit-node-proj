@@ -21,3 +21,6 @@ Replace the following placeholders:
 'database_name' with the name of your MySQL database.
 'username' with your MySQL username.
 'password' with your MySQL password.
+
+### 2. Start the project
+npm run dev
