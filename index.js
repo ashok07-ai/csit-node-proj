@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const Book = require("./models/Book.js");
 const Student = require("./models/Student.js");
 const StudentBook = require("./models/StudentBook.js");
+const UploadFileModel = require("./models/UploadFileModel.js");
 
 const app = express();
 const port = process.env.PORT || 5001;
@@ -23,6 +24,10 @@ app.use('/api/author', require("./routes/authorRoute.js"))
 app.use('/api/uploadImage', require("./routes/uploadImageRoute.js"))
 
 // sequelize.sync({ force: true })
+app.use('/api/uploadFile', require("./routes/fileUploadRoute.js"))
+
+// sequelize.sync({force: true})
+
 
 try {
     sequelize.authenticate();
