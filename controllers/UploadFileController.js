@@ -39,35 +39,7 @@ const uploadSingleFile = async (req, res) =>{
    }
 }
 
-// function for uploading multiple files
-const multipleFIleUploadData = multer({storage}).array('filename');
-const uploadMultipleFile = async(req, res)=>{
-    try {
-        multipleFIleUploadData(req, res, async(error)=>{
-            if(error){
-                console.error(error);
-                return res.status(500).json({error: "Error while uploading the file"})
-            }
 
-            const multipleFileData = req.files.map((file, index)=>({
-                title: req.body.title[index],
-                filename: file.filename
-            }))
-
-            console.log(multipleFileData)
-
-            // create multiple files in database
-            // const createMultipleFileData = await UploadFileModel.bulkCreate(multipleFileData)
-        
-            return res.status(201).json({message: "Multiple Files uploaded successfully!!", data: createMultipleFileData})
-        })
-       
-      
-       } catch (error) {
-            console.error(error);
-            return res.status(500).json({message: "Internal Server Error!!"})
-       }
-}
 const deleteFile = async (req, res)=>{
     try {
         const fileId = req.params.id;
@@ -97,6 +69,5 @@ const deleteFile = async (req, res)=>{
 
 module.exports = {
     uploadSingleFile,
-    uploadMultipleFile,
     deleteFile
 }
