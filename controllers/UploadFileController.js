@@ -44,12 +44,10 @@ const deleteFile = async (req, res)=>{
     try {
         const fileId = req.params.id;
         const fileData = await UploadFileModel.findByPk(fileId)
-        if(!fileId){
+        if(!fileData){
             return res.status(404).json({ error: 'File not found' });
         }
 
-      
-        if (fileData) {
              // Delete the file from the 'assets' folder
             const filePath = path.join('./assets', fileData.filename);
             await fs.unlink(filePath);
@@ -57,9 +55,7 @@ const deleteFile = async (req, res)=>{
             // Delete the file record from the database
             await fileData.destroy();
             res.status(200).json({ message: 'file deleted successfully!!' });
-        } else {
-            res.status(404).json({ message: "FileData not found" })
-        }
+     
     } catch (error) {
         console.error("Error", error);
         res.status(500).json({ message: "Internal Server error!!" })
