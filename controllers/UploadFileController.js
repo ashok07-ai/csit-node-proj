@@ -58,6 +58,9 @@ const deleteFile = async (req, res)=>{
      
     } catch (error) {
         console.error("Error", error);
+     if (error.code === 'ENOENT') {
+            return res.status(404).json({ message: 'File not found' });
+        }
         res.status(500).json({ message: "Internal Server error!!" })
     }
 }
